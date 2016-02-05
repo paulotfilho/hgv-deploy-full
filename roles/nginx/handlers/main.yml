@@ -5,6 +5,3 @@
 
 - name: nginx restart
   service: name=nginx state=restarted
-
-- name: update-rc nginx
-  command: update-rc.d nginx defaults
