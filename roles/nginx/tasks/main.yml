@@ -5,14 +5,13 @@
 
 - name: Enable Nginx stable repo
   run_once: true
-  apt_repository: repo='deb http://nginx.org/packages/ubuntu {{ ansible_lsb.codename }} nginx' state=present update_cache=yes
+  apt_repository: repo='deb http://nginx.org/packages/debian {{ ansible_lsb.codename }} nginx' state=present update_cache=yes
 
 - name: Install nginx
   run_once: true
   apt: name=nginx state=present
   notify:
     - nginx restart
-    - update-rc nginx
 
 - name: Ensure /etc/nginx directories exist
   run_once: true
