@@ -6,7 +6,7 @@
 
 - name: Add the varnish cache repo file
   run_once: true
-  apt_repository: repo='deb http://repo.varnish-cache.org/ubuntu/ {{ ansible_lsb.codename }} varnish-{{ varnish_version }}' state=present update_cache=yes
+  apt_repository: repo='deb http://repo.varnish-cache.org/debian/ {{ ansible_lsb.codename }} varnish-{{ varnish_version }}' state=present update_cache=yes
 
 - name: Install Varnish
   run_once: true
