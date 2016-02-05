@@ -7,7 +7,6 @@
     - common
     - hhvm
     - php-fpm
-    - memcached
     - percona
     - nginx
     - wp-cli
