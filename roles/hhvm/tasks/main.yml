@@ -5,7 +5,7 @@
 
 - name: Enable HHVM repo
   run_once: true
-  apt_repository: repo="deb http://dl.hhvm.com/ubuntu {{ ansible_lsb.codename }} main" state=present
+  apt_repository: repo="deb http://dl.hhvm.com/debian {{ ansible_lsb.codename }} main" state=present
 
 - name: Install HHVM
   run_once: true
