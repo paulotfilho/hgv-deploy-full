@@ -25,9 +25,9 @@ This Playbook will setup:
 
 1. SSH onto a newly created server
 1.5. Add necessary Apt package (if not already installed) with `sudo apt-get install software-properties-common`
-2. Add Ansible with `sudo add-apt-repository ppa:ansible/ansible`
+2. Install pip with `sudo apt-get install python-pip python-dev`
 3. Update Apt with `sudo apt-get update && sudo apt-get upgrade`
-4. Install Git and Ansible with `sudo apt-get install ansible git`
+4. Install Git and Ansible with `sudo apt-get install git && sudo pip install ansible`
 5. Clone this repository with `git clone https://github.com/xDae/hgv-deploy-full.git`
 6. Move into `hgv-deploy-full`
 7. Edit the `hosts` file and change `yourhostname.com` to your host name. If you have more than one website that you want to install on this server add each on a new line.
