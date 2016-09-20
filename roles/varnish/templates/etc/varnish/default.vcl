@@ -8,30 +8,30 @@ acl purge {
 }
 
 sub vcl_recv {
-	# Allow purge requests
-	if (req.request == "PURGE") {
-		if (!client.ip ~ purge) {
-			error 405 "Not allowed.";
-		}
-		ban("req.url ~ ^" + req.url + " && req.http.host == " + req.http.host);
-		return(lookup);
-	}
+    # Allow purge requests
+    if (req.request == "PURGE") {
+        if (!client.ip ~ purge) {
+            error 405 "Not allowed.";
+        }
+        ban("req.url ~ ^" + req.url + " && req.http.host == " + req.http.host);
+        return(lookup);
+    }
 
-	# Add header for sending client ip to backend
-	set     req.http.X-Forwarded-For = client.ip;
+    # Add header for sending client ip to backend
+    set     req.http.X-Forwarded-For = client.ip;
 
-	# Normalize     content-encoding
-	if (req.http.Accept-Encoding) {
-		if (req.url ~ "\.(jpg|png|gif|gz|tgz|bz2|lzma|tbz)(\?.*|)$") {
-			remove req.http.Accept-Encoding;
-		} elsif (req.http.Accept-Encoding ~ "gzip") {
-			set req.http.Accept-Encoding = "gzip";
-		} elsif (req.http.Accept-Encoding ~ "deflate") {
-			set req.http.Accept-Encoding = "deflate";
-		} else {
-			remove req.http.Accept-Encoding;
-		}
-	}
+    # Normalize     content-encoding
+    if (req.http.Accept-Encoding) {
+        if (req.url ~ "\.(jpg|png|gif|gz|tgz|bz2|lzma|tbz)(\?.*|)$") {
+            remove req.http.Accept-Encoding;
+        } elsif (req.http.Accept-Encoding ~ "gzip") {
+            set req.http.Accept-Encoding = "gzip";
+        } elsif (req.http.Accept-Encoding ~ "deflate") {
+            set req.http.Accept-Encoding = "deflate";
+        } else {
+            remove req.http.Accept-Encoding;
+        }
+    }
 
     # Remove cookies and query string for real static files
     if (req.url ~ "^/[^?]+\.(gif|jpg|jpeg|swf|css|js|txt|flv|mp3|mp4|pdf|ico|png|gz|zip|lzma|bz2|tgz|tbz)(\?.*|)$") {
@@ -39,22 +39,22 @@ sub vcl_recv {
        set req.url = regsub(req.url, "\?.*$", "");
     }
 
-	# dont cache woocommerce pages or yith wishlist
-	if (req.url ~ "^/(cart|my-account|checkout|addons|wishlist)") {
-		return (pass);
-	}
-	if (req.url ~ "^/(cart|my-account|checkout|addons|wishlist)/") {
-		return (pass);
-	}
-	if (req.url ~ "(cart|my-account|checkout|addons|wishlist)") {
-		return (pass);
-	}
-	if (req.url ~ "(cart|my-account|checkout|addons|wishlist)/") {
-		return (pass);
-	}
-	if ( req.url ~ "\?add-to-cart=" ) {
-		return (pass);
-	}
+    # dont cache woocommerce pages or yith wishlist
+    if (req.url ~ "^/(cart|my-account|checkout|addons|wishlist)") {
+        return (pass);
+    }
+    if (req.url ~ "^/(cart|my-account|checkout|addons|wishlist)/") {
+        return (pass);
+    }
+    if (req.url ~ "(cart|my-account|checkout|addons|wishlist)") {
+        return (pass);
+    }
+    if (req.url ~ "(cart|my-account|checkout|addons|wishlist)/") {
+        return (pass);
+    }
+    if ( req.url ~ "\?add-to-cart=" ) {
+        return (pass);
+    }
 
     # Don't cache admin
     if (req.url ~ "((wp-(login|admin|comments-post.php|cron.php))|login|timthumb|wrdp_files)" || req.url ~ "preview=true" || req.url ~ "xmlrpc.php") {
@@ -67,38 +67,38 @@ sub vcl_recv {
 }
 
 sub vcl_hit {
-	# purge cached objects from memory
-	if (req.request == "PURGE") {
-			purge;
-			error 200 "Purged";
-	}
+    # purge cached objects from memory
+    if (req.request == "PURGE") {
+            purge;
+            error 200 "Purged";
+    }
 }
 
 sub vcl_miss {
-	# purge cached objects variants from memory
-	if (req.request == "PURGE") {
-		if (!client.ip ~ purge) {
-			error 405 "Not allowed.";
-		}
-		ban("req.url ~ "+req.url);
-		error 200 "Purged";
-	}
+    # purge cached objects variants from memory
+    if (req.request == "PURGE") {
+        if (!client.ip ~ purge) {
+            error 405 "Not allowed.";
+        }
+        ban("req.url ~ "+req.url);
+        error 200 "Purged";
+    }
 
-	if (req.request == "PURGE") {
-			purge;
-			error 404 "Purged varients";
-	}
+    if (req.request == "PURGE") {
+            purge;
+            error 404 "Purged varients";
+    }
 }
 
 sub vcl_fetch {
-	# Dont cache admin
-	if (req.url ~ "(wp-(login|admin|comments-post.php|cron.php))|login" || req.url ~ "preview=true" || req.url ~ "xmlrpc.php") {
-		return (deliver);
-	} else {
-		if ( beresp.ttl > 0s && !(beresp.http.set-cookie ~ "wpoven-no-cache") ) {
-			unset beresp.http.set-cookie;
-		}
-	}
+    # Dont cache admin
+    if (req.url ~ "(wp-(login|admin|comments-post.php|cron.php))|login" || req.url ~ "preview=true" || req.url ~ "xmlrpc.php") {
+        return (deliver);
+    } else {
+        if ( beresp.ttl > 0s && !(beresp.http.set-cookie ~ "wpoven-no-cache") ) {
+            unset beresp.http.set-cookie;
+        }
+    }
 }
 
 sub vcl_deliver {
