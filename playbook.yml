@@ -5,9 +5,11 @@
 
   roles:
     - common
-    - hhvm
+    - { role: hhvm, when: ansible_lsb.major_release | int >= 8 }
     - php-fpm
-    - percona
+    - memcached
+    - mariadb
     - nginx
     - wp-cli
+    - varnish
     - { role: wordpress, enviro: hhvm, tags: [ 'wordpress' ] }
