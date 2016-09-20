@@ -1,9 +1,0 @@
----
-
-- name: mysql restart
-  service: name=mysql state=restarted
-
-- name: mysql reload
-  service: name=mysql state=reloaded
-
-
